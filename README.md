@@ -1,5 +1,5 @@
 
-# 🛠️ Realtime Socket Chat
+# Realtime Socket Chat
 
 ## 🌟 Overview
 **Realtime Socket Chat** is a full-stack chat application built with **Python, Flask, and Sockets**, integrated with **AWS DynamoDB** for message logging.  
