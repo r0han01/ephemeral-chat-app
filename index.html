@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Messenger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/styles.css"> <!-- External CSS -->
+</head>
+<body>
+    <img id="mobile-logo" src="https://cdn-icons-png.freepik.com/512/16360/16360299.png" alt="Logo">
+
+    <div id="name-container">
+        <input type="text" id="name-input" placeholder="Enter your name">
+        <input type="text" id="code-input" placeholder="Enter 8-digit code">
+        <button onclick="joinChat()">Join Chat</button>
+    </div>
+
+    <div class="header">
+        <img src="https://cdn-icons-png.freepik.com/512/12523/12523563.png" alt="Users Icon" class="users-icon">
+        <div id="users-display">Users online: 0</div>
+        <div id="online-users"></div>
+        <div id="chat-subject">
+            <span>Chat Subject: Group Chat</span>
+            <img src="https://img.icons8.com/?size=100&id=111452&format=png&color=000000" alt="Edit Icon" onclick="editSubject()">
+        </div>
+        <div id="join-messages"></div>
+    </div>
+    <div id="chat-display">
+        <div class="chat-notice" id="chat-notice">
+            🌐 Chat data is ephemeral: As long as you chat while the server is running, your messages are stored
+            unencrypted in AWS DynamoDB. Once the server stops, all data vanishes entirely, ensuring no one can track
+            your chat history afterward. Privacy guaranteed! 🔒
+        </div>
+    </div>
+    <div class="input-container">
+        <input type="text" id="message-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <button id="toggle-sidebar">☰</button>
+
+    <script src="static/js/script.js"></script> <!-- External JS -->
+</body>
+</html>

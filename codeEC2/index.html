@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Messenger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #fff;
+            min-height: 100vh;
+            color: #000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #name-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://img.freepik.com/free-psd/social-media-sales-background_23-2151465324.jpg?t=st=1740912863~exp=1740916463~hmac=4b5476a4e605168d793f8c8d392179b6c110957a517977f196a4738d85bf9022&w=2000&cachebuster=1740912865851') no-repeat center center/cover;
+            backdrop-filter: blur(500px);
+            /* Approximates 30% blur */
+            -webkit-backdrop-filter: blur(500px);
+            /* For Safari */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        #name-container.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        #name-input,
+        #code-input {
+            padding: 12px 20px;
+            width: 250px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        #name-input:focus,
+        #code-input:focus {
+            outline: none;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            background: #fff;
+            color: #000;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100%;
+            z-index: 5;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-right: 1px solid #ebedf0;
+        }
+
+        .header img.users-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .header img.users-icon:hover {
+            transform: scale(1.1);
+        }
+
+        #users-display {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #050505;
+            text-align: center;
+        }
+
+        #online-users {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .user-card {
+            background: #f0f2f5;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #050505;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+            width: 80%;
+            text-align: center;
+        }
+
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        #chat-subject {
+            font-size: 14px;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: #65676b;
+            width: 100%;
+        }
+
+        #chat-subject span {
+            margin-right: 10px;
+        }
+
+        #chat-subject img {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.2s ease;
+            filter: brightness(0) saturate(100%) invert(40%);
+        }
+
+        #chat-subject img:hover {
+            transform: rotate(15deg);
+            opacity: 0.8;
+        }
+
+        #join-messages {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+        }
+
+        .join-message {
+            font-size: 14px;
+            color: #65676b;
+            margin-bottom: 10px;
+            text-align: center;
+            width: 80%;
+        }
+
+        #chat-display {
+            flex: 1;
+            padding-top: 20px;
+            /* Reducing space above messages */
+            padding-bottom: 50px;
+            padding-left: 320px;
+            padding-right: 20px;
+            overflow-y: auto;
+            background: #fff;
+            position: relative;
+        }
+
+
+        .message {
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            max-width: 70%;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .message.sent {
+            align-items: flex-end;
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        .message.received {
+            align-items: flex-start;
+            margin-right: auto;
+        }
+
+        .message-content {
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 15px;
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.4;
+            display: inline-block;
+            word-wrap: break-word;
+            max-width: 100%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .message-content:hover {
+            transform: translateY(-1px);
+        }
+
+        .message.sent .message-content {
+            background: #0084ff;
+            color: #fff;
+        }
+
+        .message.sent .message-content .sender-name {
+            font-weight: 600;
+            margin-right: 5px;
+            color: #fff;
+        }
+
+        .message.received .message-content {
+            background: #ebedf0;
+            color: #000;
+        }
+
+        .message.received .message-content .sender-name {
+            font-weight: 600;
+            margin-right: 5px;
+            color: #000;
+        }
+
+        .message-time {
+            font-size: 11px;
+            margin-top: 4px;
+            font-family: 'Montserrat', sans-serif;
+            color: #65676b;
+        }
+
+        .message.sent .message-time {
+            align-self: flex-end;
+        }
+
+        .message.received .message-time {
+            align-self: flex-start;
+        }
+
+        .chat-notice {
+            position: relative;
+            /* Ensures it remains within chat-display */
+            top: 2px;
+            /* Adds small gap from top */
+            left: 50%;
+            /* Centers horizontally */
+            transform: translateX(-50%);
+            /* Ensures perfect centering */
+            background: #fff3cd;
+            /* Light yellow background */
+            color: #856404;
+            /* Dark yellow text */
+            padding: 6px 12px;
+            /* Adjusted padding for a slimmer look */
+            border-radius: 8px;
+            font-size: 12px;
+            /* Reduced font size for compact display */
+            font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            max-width: 40%;
+            /* Reduced width to make it thinner */
+            text-align: center;
+            z-index: 10;
+            display: none;
+            /* Hidden by default */
+            line-height: 1.4;
+            /* Ensures good readability */
+            margin-top: 2px;
+            /* Adds a small gap above */
+            margin-bottom: 20px;
+            /* Leaves noticeable gap below */
+        }
+
+
+        .input-container {
+            position: fixed;
+            bottom: 0;
+            left: 300px;
+            right: 0;
+            padding: 10px 20px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            border-top: 1px solid #ebedf0;
+            z-index: 5;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background: #f0f2f5;
+            color: #000;
+            font-size: 15px;
+            font-family: 'Montserrat', sans-serif;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        #message-input:focus {
+            outline: none;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background: #0084ff;
+            color: #fff;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 132, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #0073e6;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 132, 255, 0.4);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f0f2f5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #0084ff;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0073e6;
+        }
+
+        /* Hide Logo on Desktop */
+        @media screen and (min-width: 769px) {
+            #mobile-logo {
+                display: none !important;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .message.received {
+                align-items: flex-start;
+                margin-right: auto;
+                margin-left: 15px;
+                /* ✅ Adds a small gap to the left ONLY on mobile */
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+
+            /* Hide Scrollbar for Chat Display */
+            #chat-display {
+                -ms-overflow-style: none;
+                /* Hide scrollbar for Internet Explorer and Edge */
+                scrollbar-width: none;
+                /* Hide scrollbar for Firefox */
+                overflow-y: scroll;
+                /* Allow scrolling but hide scrollbar */
+            }
+
+            #chat-display::-webkit-scrollbar {
+                display: none;
+                /* Hide scrollbar for Chrome, Safari, and Opera */
+            }
+        }
+
+
+
+        /* Mobile Optimization */
+        @media screen and (max-width: 768px) {
+
+            /* Mobile Logo - Initially Hidden */
+            #mobile-logo {
+                display: none;
+                /* Ensure it's fully hidden on login */
+                position: fixed;
+                top: 10px;
+                left: 35px;
+                width: 50px;
+                /* Adjust size */
+                height: 50px;
+                z-index: 100;
+            }
+
+            /* Show Logo Only After Login */
+            body.logged-in #mobile-logo {
+                display: block;
+                ;
+            }
+
+            /* Sidebar Toggle Button - Moved to Right Side */
+            #toggle-sidebar {
+                display: none;
+                position: fixed;
+                top: 15px;
+                right: 10px;
+                /* Moved to right */
+                background: linear-gradient(135deg, #0084ff, #00c6ff);
+                color: white;
+                padding: 12px 16px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: bold;
+                z-index: 50;
+                cursor: pointer;
+                transition: all 0.3s ease-in-out;
+                box-shadow: 0 4px 10px rgba(0, 132, 255, 0.3);
+            }
+
+            /* Mobile Logo - Only visible in mobile */
+            #mobile-logo {
+                display: block;
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                width: 50px;
+                /* Adjust size as needed */
+                height: 50px;
+                z-index: 100;
+            }
+
+            /* Hover effect */
+            #toggle-sidebar:hover {
+                background: linear-gradient(135deg, #0084ff, #00b3ff);
+                transform: scale(1.1);
+                box-shadow: 0 6px 12px rgba(0, 132, 255, 0.3);
+            }
+
+            /* Click effect */
+            #toggle-sidebar:active {
+                transform: scale(0.95);
+                box-shadow: 0 2px 6px rgba(0, 132, 255, 0.3);
+            }
+
+            /* Push the chat notice down to prevent overlap */
+            .chat-notice {
+                margin-top: 60px !important;
+                margin-bottom: 25px !important;
+                max-width: 90%;
+                font-size: 11px;
+                padding: 8px;
+            }
+
+            /* Sidebar (Stays on Left) */
+            .header {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 10px;
+                border-right: none;
+                display: none;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            /* Show Sidebar when Active */
+            .header.active {
+                display: flex;
+                position: fixed;
+                top: 0;
+                left: 0;
+                /* Sidebar still opens from left */
+                width: 250px;
+                height: 100%;
+                background: white;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+            }
+
+            .header img.users-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            #users-display {
+                font-size: 16px;
+            }
+
+            #online-users {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            /* Chat Display */
+            #chat-display {
+                padding: 20px 10px;
+                padding-left: 0px;
+            }
+
+            #chat-display {
+                padding-bottom: 70px;
+                /* ✅ Adds space below messages to prevent overlap */
+            }
+
+            /* Message Bubbles */
+            .message {
+                max-width: 90%;
+            }
+
+            .message-content {
+                font-size: 14px;
+            }
+
+            /* Chat Input & Send Button */
+            .input-container {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 10px;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                background: #fff;
+                border-top: 1px solid #ebedf0;
+            }
+
+            #message-input {
+                width: 80%;
+                font-size: 14px;
+                padding: 12px;
+                border-radius: 20px;
+            }
+
+            /* Send Button */
+            .input-container button {
+                width: 18%;
+                padding: 12px;
+                font-size: 14px;
+                margin-top: 0;
+                border-radius: 20px;
+                background: linear-gradient(135deg, #0084ff, #00c6ff);
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease-in-out;
+                box-shadow: 0 4px 10px rgba(0, 132, 255, 0.3);
+            }
+
+            /* Hover effect */
+            .input-container button:hover {
+                background: linear-gradient(135deg, #0073e6, #00b3ff);
+                transform: scale(1.05);
+                box-shadow: 0 6px 12px rgba(0, 132, 255, 0.5);
+            }
+
+            /* Click effect */
+            .input-container button:active {
+                transform: scale(0.95);
+                box-shadow: 0 2px 6px rgba(0, 132, 255, 0.3);
+            }
+
+            /* Super Cool Animated Login Button */
+            #name-container button {
+                width: 150px;
+                padding: 12px 18px;
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                text-align: center;
+                border: none;
+                border-radius: 25px;
+                background: linear-gradient(135deg, #0084ff, #00c6ff);
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease-in-out;
+                box-shadow: 0 4px 10px rgba(0, 132, 255, 0.3);
+            }
+
+            /* Hover effect */
+            #name-container button:hover {
+                background: linear-gradient(135deg, #0073e6, #00b3ff);
+                transform: scale(1.05);
+                box-shadow: 0 6px 12px rgba(0, 132, 255, 0.5);
+            }
+
+            /* Click effect */
+            #name-container button:active {
+                transform: scale(0.95);
+                box-shadow: 0 2px 6px rgba(0, 132, 255, 0.3);
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <img id="mobile-logo" src="https://cdn-icons-png.freepik.com/512/16360/16360299.png" alt="Logo">
+
+    <div id="name-container">
+        <input type="text" id="name-input" placeholder="Enter your name">
+        <input type="text" id="code-input" placeholder="Enter 8-digit code">
+        <button onclick="joinChat()">Join Chat</button>
+    </div>
+
+    <div class="header">
+        <img src="https://cdn-icons-png.freepik.com/512/12523/12523563.png" alt="Users Icon" class="users-icon">
+        <div id="users-display">Users online: 0</div>
+        <div id="online-users"></div>
+        <div id="chat-subject">
+            <span>Chat Subject: Group Chat</span>
+            <img src="https://img.icons8.com/?size=100&id=111452&format=png&color=000000" alt="Edit Icon"
+                onclick="editSubject()">
+        </div>
+        <div id="join-messages"></div>
+    </div>
+    <div id="chat-display">
+        <div class="chat-notice" id="chat-notice">
+            🌐 Chat data is ephemeral: As long as you chat while the server is running, your messages are stored
+            unencrypted in AWS DynamoDB. Once the server stops, all data vanishes entirely, ensuring no one can track
+            your chat history afterward. Privacy guaranteed! 🔒
+        </div>
+    </div>
+    <div class="input-container">
+        <input type="text" id="message-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <button id="toggle-sidebar">☰</button>
+
+    <script>
+        let userName;
+        let displayedMessages = new Set();
+        let currentUsers = [];
+
+        function joinChat() {
+            userName = document.getElementById('name-input').value.trim();
+            const code = document.getElementById('code-input').value.trim();
+            if (!userName || !code) {
+                alert('Please enter both a name and an 8-digit code!');
+                return;
+            }
+
+            fetch('/join', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: userName,
+                    code: code
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'Invalid authentication code');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    document.getElementById('name-container').classList.add('hidden');
+                    setTimeout(() => {
+                        document.getElementById('name-container').style.display = 'none';
+                        document.getElementById('chat-notice').style.display = 'block';
+                        document.getElementById("toggle-sidebar").style.display = "block"; // Show sidebar toggle button
+                        document.getElementById("mobile-logo").style.display = "block"; // ✅ Show mobile logo after login
+                        pollMessages(); // Start polling after login
+                    }, 500);
+                })
+                .catch(error => {
+                    alert(error.message || 'Error joining chat');
+                    console.error('Error joining chat:', error);
+                });
+        }
+
+
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            if (message) {
+                const messageId = Date.now() + Math.random().toString(36).substr(2);
+                fetch('/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: userName,
+                        message: message,
+                        id: messageId
+                    })
+                })
+                    .then(() => {
+                        input.value = '';
+                    })
+                    .catch(error => console.error('Error sending message:', error));
+            }
+        }
+
+        function editSubject() {
+            const currentSubject = document.querySelector('#chat-subject span').textContent.replace("Chat Subject: ", "");
+            const newSubject = prompt("Enter new chat subject:", currentSubject);
+            if (newSubject && newSubject.trim()) {
+                const messageId = Date.now() + Math.random().toString(36).substr(2);
+                fetch('/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: userName,
+                        message: `changed chat subject to: ${newSubject.trim()}`,
+                        id: messageId,
+                        new_subject: newSubject.trim()
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to update subject');
+                        }
+                        return response.json();
+                    })
+                    .then(() => {
+                        console.log(`Subject change request sent: ${newSubject}`);
+                        // Force an immediate poll to ensure quick update
+                        setTimeout(pollMessages, 100);
+                    })
+                    .catch(error => console.error('Error changing subject:', error));
+            }
+        }
+
+        function pollMessages() {
+            fetch('/messages', { cache: 'no-store' }) // Prevent caching
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Polling data:", data); // Debug server response
+                    const usersDisplay = document.getElementById('users-display');
+                    const onlineUsers = document.getElementById('online-users');
+                    const chatDisplay = document.getElementById('chat-display');
+                    const joinMessages = document.getElementById('join-messages');
+                    const subjectSpan = document.querySelector('#chat-subject span');
+
+                    usersDisplay.textContent = `Users online: ${data.user_count}`;
+                    subjectSpan.textContent = `Chat Subject: ${data.chat_subject}`; // Update from server
+
+                    if (JSON.stringify(data.users) !== JSON.stringify(currentUsers)) {
+                        onlineUsers.innerHTML = '';
+                        data.users.forEach(user => {
+                            const userCard = document.createElement('div');
+                            userCard.className = 'user-card';
+                            userCard.textContent = user;
+                            onlineUsers.appendChild(userCard);
+                        });
+                        currentUsers = data.users;
+                    }
+
+                    data.messages.forEach(message => {
+                        if (!displayedMessages.has(message)) {
+                            displayedMessages.add(message);
+                            if (message.includes("has joined the chat!")) {
+                                const joinDiv = document.createElement('div');
+                                joinDiv.className = 'join-message';
+                                joinDiv.textContent = message;
+                                joinMessages.appendChild(joinDiv);
+                            } else {
+                                const messageDiv = document.createElement('div');
+                                messageDiv.className = 'message ' + (message.startsWith(userName) ? 'sent' : 'received');
+
+                                const contentDiv = document.createElement('div');
+                                contentDiv.className = 'message-content';
+
+                                const [sender, ...contentParts] = message.split(': ');
+                                const content = contentParts.join(': ');
+                                const senderSpan = document.createElement('span');
+                                senderSpan.className = 'sender-name';
+                                senderSpan.textContent = sender;
+
+                                const messageText = document.createTextNode(': ' + content);
+                                contentDiv.appendChild(senderSpan);
+                                contentDiv.appendChild(messageText);
+
+                                const timeDiv = document.createElement('div');
+                                timeDiv.className = 'message-time';
+                                timeDiv.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                                messageDiv.appendChild(contentDiv);
+                                messageDiv.appendChild(timeDiv);
+                                chatDisplay.appendChild(messageDiv);
+                            }
+                        }
+                    });
+                    chatDisplay.scrollTop = chatDisplay.scrollHeight;
+                    joinMessages.scrollTop = joinMessages.scrollHeight;
+                })
+                .catch(error => console.error('Error polling messages:', error))
+                .finally(() => {
+                    setTimeout(pollMessages, 500);
+                });
+        }
+
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        document.getElementById("toggle-sidebar").addEventListener("click", function () {
+            document.querySelector(".header").classList.toggle("active");
+        });
+
+        // Ensure logo is hidden on page load but properly handled after login
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("mobile-logo").style.display = "none"; // ✅ Hide logo when page first loads
+        });
+
+    </script>
+</body>
+
+</html>

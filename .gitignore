@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env
+*.env
+
+# AWS credentials (ensure they are not exposed)
+.aws/
+
+# Logs and database files
+*.log
+*.sqlite
+*.db
+*.pkl
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Node modules (if you ever use npm packages for front-end)
+node_modules/
+
+# Ignore IDE and editor settings
+.vscode/
+.idea/
+*.iml
+
+# Ignore temporary files
+*.swp
+*.swo
+*.bak
+
+# Ignore files related to deployment or testing
+.envrc
+*.secret
