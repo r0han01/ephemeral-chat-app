@@ -58,7 +58,7 @@ This application is containerized using **Docker**, making it easy to run anywhe
 ### 🚀 **Pull & Run from Docker Hub**
 ```sh
 docker pull r0han01/realtime-socket-chat:latest
-docker run -p 8000:8000 -p 5555:5555 --env-file .env r0han01/realtime-socket-chat
+docker run -it -p 8000:8000 -p 5555:5555 --env-file .env realtime-socket-chat
 ```
 
 📌 **Docker Repository:** [r0han01/realtime-socket-chat](https://hub.docker.com/repository/docker/r0han01/realtime-socket-chat/general)
@@ -67,7 +67,7 @@ docker run -p 8000:8000 -p 5555:5555 --env-file .env r0han01/realtime-socket-cha
 If you modify the code, build a new Docker image:
 ```sh
 docker build -t realtime-socket-chat .
-docker run -p 8000:8000 -p 5555:5555 --env-file .env realtime-socket-chat
+docker run -it -p 8000:8000 -p 5555:5555 --env-file .env realtime-socket-chat
 ```
 
 ---
