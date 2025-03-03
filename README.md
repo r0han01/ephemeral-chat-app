@@ -4,6 +4,9 @@
 ## 🌟 Overview
 **Realtime Socket Chat** is a full-stack chat application built with **Python, Flask, and Sockets**, integrated with **AWS DynamoDB** for message logging.  
 It supports **real-time communication, ephemeral messaging, and a responsive front-end**.
+###
+![ScreenShot Tool -20250303044034](https://github.com/user-attachments/assets/65aff2ec-cfa2-41a3-aaeb-38559e7037fe)
+###
 
 This project **does NOT use WebSockets**; instead, we rely on **pure socket programming** to handle **real-time communication** between users.
 
@@ -27,12 +30,17 @@ ephemeral-chat-app/
 ├── LICENSE                 # MIT License
 └── README.md               # Project documentation (this file)
 ```
+###
+![Screenshot from 2025-03-03 04-50-22](https://github.com/user-attachments/assets/bf42a8e2-5be7-47b2-a601-5b04c1b5bc22)
+###
 
 ### 🔹 **Why `codeEC2/` Directory?**
 On **AWS EC2 servers**, creating directories and setting up dependencies can be time-consuming.  
 The `codeEC2/` folder contains a **minimal version** of the application with just `server.py` and `index.html`.  
 Users can **easily copy this directory** and start the server on EC2 without extra setup.
-
+###
+![Screenshot from 2025-03-03 04-52-01](https://github.com/user-attachments/assets/066f3787-2e71-460e-b0ba-a3d00a9bc445)
+###
 ---
 
 ## ⚡ **How the Chat Application Works**
@@ -43,11 +51,32 @@ Users can **easily copy this directory** and start the server on EC2 without ext
 - Messages are **logged into AWS DynamoDB** for persistence.
 
 ### 🛠 **Key Features**
-✅ **Real-time messaging** using **TCP sockets**.  
+✅ **Real-time messaging** using **TCP sockets**.
+###
+![ScreenShot Tool -20250303044034 (1)](https://github.com/user-attachments/assets/b79ad1b8-81ad-4808-879e-aa5eef6d199a)
+###
 ✅ **Authentication via 8-digit access codes**.  
-✅ **DynamoDB logging** for session tracking & message storage.  
-✅ **Ephemeral chat** (data is deleted when the server shuts down).  
-✅ **Docker support** for easy deployment.  
+###
+![Screenshot from 2025-03-03 05-03-39](https://github.com/user-attachments/assets/f58a06cd-9741-4053-b76e-c3e2f7518b40)
+###
+![ScreenShot Tool -20250303051043 (1)](https://github.com/user-attachments/assets/6fb3df06-e187-4fce-8694-592cad862773)
+###
+✅ **DynamoDB logging** for session tracking & message storage.
+###
+![ScreenShot Tool -20250303051413](https://github.com/user-attachments/assets/10d80ed8-77a0-437e-8aab-f5a644e44c5a)
+###
+![ScreenShot Tool -20250303051508](https://github.com/user-attachments/assets/bec293de-50ae-41d9-9aa1-442fc1487688)
+###
+✅ **Ephemeral chat** (data is deleted when the server shuts down).
+###
+![Screenshot from 2025-03-03 05-18-02](https://github.com/user-attachments/assets/795250af-effa-49ac-b797-9428cdc3730b)
+###
+![ScreenShot Tool -20250303052020](https://github.com/user-attachments/assets/3525bef2-9b23-436f-8471-34a0aed7a8cb)
+###
+✅ **Docker support** for easy deployment.
+###
+![Screenshot from 2025-03-03 05-22-02 (1)](https://github.com/user-attachments/assets/964c65e1-1a8d-4057-855c-4e75d2e515ca)
+###
 ✅ **AWS EC2 compatibility** with a lightweight `codeEC2/` version.  
 
 ---
